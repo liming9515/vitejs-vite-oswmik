@@ -1,30 +1,33 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue';
+import { defineAsyncComponent, provide } from 'vue';
+import { usePosition } from './scripts/mouse'
+import Modal from './components/Modal.vue';
+
+provide('my-name', 'ming.li')
+
+const display = ref(false)
+
+const MyComponent = defineAsyncComponent({
+  loader: () =>
+    import('./components/MyComponent.vue')
+  ,
+  delay: 2000
+})
+
+const vClick = {
+  mounted: (el, binding, vNode, preNode) => {
+    console.log(el, binding, vNode, preNode)
+  }
+}
+
+const { x, y } = usePosition()
+
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <MyComponent />
+  <button v-click="'abc'" @click="display = true">Click Me</button>
+  <Modal header="这是标题" message="这是内容" v-if="display" @cancel="display=false"></Modal>
+  your position {{ x }} - {{ y }}
 </template>
-
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
